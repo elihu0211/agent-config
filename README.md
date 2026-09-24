@@ -12,7 +12,7 @@ DISABLE_TELEMETRY=1 npx skills add elihu0211/agent-config --skill '*' -a codex -
 DISABLE_TELEMETRY=1 npx skills update -p -y
 ```
 
-`-a codex` writes to `.agents/skills/`, which Codex, Cursor, GitHub Copilot and Gemini CLI read. Claude Code only scans `.claude/skills/`, so consuming projects symlink `.claude/skills → ../.agents/skills`.
+`-a codex` writes to `.agents/skills/`, which Codex, Cursor, GitHub Copilot and Gemini CLI read. Claude Code only scans `.claude/skills/`, so consuming projects symlink **each skill** there: `.claude/skills/<name> → ../../.agents/skills/<name>`. The [docs](https://code.claude.com/docs/en/skills) cover symlinked `<skill-name>` entries, not a symlinked `skills` directory.
 
 ## Skills
 
