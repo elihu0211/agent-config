@@ -16,11 +16,9 @@ DISABLE_TELEMETRY=1 npx skills update -p -y
 
 ## Skills
 
-| Skill | Purpose |
-|-------|---------|
-| `maintain-agent-context` | Keep agent config neutral: canonical `AGENTS.md`, import-only `CLAUDE.md`, single skills tree |
+Each skill is a directory under [`skills/`](skills); its `SKILL.md` front matter states when it applies. The set changes over time, so the directory is the index.
 
 ## Changing a skill
 
-1. Edit `skills/<name>/SKILL.md` here and open a PR.
+1. Edit `skills/<name>/SKILL.md` here and open a PR (conventions: [`AGENTS.md`](AGENTS.md)).
 2. After merge, run `npx skills update` in each consuming project.
