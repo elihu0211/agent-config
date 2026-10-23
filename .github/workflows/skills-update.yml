@@ -56,7 +56,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B "$BRANCH"
-          git add -A .agents skills-lock.json
+          # Some repos ignore .agents/ and track only the lock file; git add fails on an
+          # explicitly named ignored path, so add it only when it is tracked.
+          git add -A -- skills-lock.json
+          git check-ignore -q .agents || git add -A -- .agents
           git commit -m "chore(skills): update shared skills"
           git push --force origin "$BRANCH"
           if [ -z "$(gh pr list --head "$BRANCH" --state open --json number --jq '.[].number')" ]; then
