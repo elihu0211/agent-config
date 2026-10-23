@@ -16,17 +16,20 @@ jobs:
       - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
       - name: Validate skills and marketplace
         run: uv run scripts/validate.py
-      - name: Skills CLI discovers exactly the skills under skills/
+      - name: No SKILL.md outside skills/
+        run: |
+          # The skills CLI scans the whole repo for SKILL.md; one outside skills/ (such as
+          # a template) would be installable with --skill '*'.
+          stray=$(find . -name SKILL.md -not -path './skills/*' -not -path './.git/*')
+          if [ -n "$stray" ]; then echo "SKILL.md outside skills/:"; echo "$stray"; exit 1; fi
+      - name: Skills CLI discovers every skill
         env:
           DISABLE_TELEMETRY: "1"
         run: |
-          # The CLI scans the whole repo for SKILL.md; anything outside skills/ (such as
-          # the template) would be installable with --skill '*'.
-          listed=$(npx --yes skills@1.7.4 add . --list < /dev/null 2>&1 \
-            | sed -n 's/^│    \([a-z0-9][a-z0-9-]*\)$/\1/p' | sort)
-          expected=$(find skills -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort)
-          if [ "$listed" != "$expected" ]; then
-            echo "skills CLI lists:"; echo "$listed"
-            echo "skills/ contains:"; echo "$expected"
-            exit 1
-          fi
+          # Match names in the CLI's output rather than parse its layout, which differs
+          # between a terminal and CI.
+          listed=$(npx --yes skills@1.7.4 add . --list < /dev/null 2>&1)
+          for dir in skills/*/; do
+            name=$(basename "$dir")
+            grep -qw -- "$name" <<<"$listed" || { echo "skills CLI does not list $name"; exit 1; }
+          done
