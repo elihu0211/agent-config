@@ -41,7 +41,10 @@
     - git config user.name "skills-update"
     - git config user.email "skills-update@${CI_SERVER_HOST}"
     - git checkout -B "$SKILLS_UPDATE_BRANCH"
-    - git add -A .agents skills-lock.json
+    # Some repos ignore .agents/ and track only the lock file; git add fails on an
+    # explicitly named ignored path, so add it only when it is tracked.
+    - git add -A -- skills-lock.json
+    - git check-ignore -q .agents || git add -A -- .agents
     - git commit -m "chore(skills): update shared skills"
     - >-
       git push --force
