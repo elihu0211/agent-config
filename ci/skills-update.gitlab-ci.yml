@@ -1,0 +1,53 @@
+# GitLab template for consuming repos: refresh installed skills and open (or update) a
+# merge request when anything changed. It never pushes to the default branch — skills
+# run with the agent's full permissions, so a human merges.
+#
+# The job is hidden (.skills-update) because consuming repos define different stages,
+# and a pipeline made only of .pre/.post jobs does not run. Consumer setup:
+#
+#   1. .gitlab-ci.yml:
+#        include:
+#          - remote: https://raw.githubusercontent.com/elihu0211/agent-skills/v1/ci/skills-update.gitlab-ci.yml
+#        skills-update:
+#          extends: .skills-update
+#          stage: <one of this repo's stages>
+#   2. CI/CD variable SKILLS_UPDATE_TOKEN (masked, protected): a project access token,
+#      role Developer, scope write_repository. Pushing with it and the merge_request
+#      push options is all the job needs; the protected default branch stays closed to it.
+#   3. Pipeline schedule on the default branch (e.g. weekly) with variable SKILLS_UPDATE=true.
+#      The repo's workflow:rules must allow that pipeline.
+#   4. Keep the repo's other jobs off that schedule, e.g. first rule in each:
+#        - if: $SKILLS_UPDATE == "true"
+#          when: never
+
+.skills-update:
+  image: node:22-alpine
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $SKILLS_UPDATE == "true"
+  variables:
+    SKILLS_CLI_VERSION: "1.7.4"
+    SKILLS_UPDATE_BRANCH: chore/skills-update
+    DISABLE_TELEMETRY: "1"
+    GIT_DEPTH: "0"
+  script:
+    - apk add --no-cache git
+    - npx --yes "skills@${SKILLS_CLI_VERSION}" update -p -y < /dev/null
+    - |
+      if [ -z "$(git status --porcelain -- .agents skills-lock.json)" ]; then
+        echo "Skills are up to date."
+        exit 0
+      fi
+    - test -n "$SKILLS_UPDATE_TOKEN" || { echo "SKILLS_UPDATE_TOKEN is not set"; exit 1; }
+    - git config user.name "skills-update"
+    - git config user.email "skills-update@${CI_SERVER_HOST}"
+    - git checkout -B "$SKILLS_UPDATE_BRANCH"
+    - git add -A .agents skills-lock.json
+    - git commit -m "chore(skills): update shared skills"
+    - >-
+      git push --force
+      "https://oauth2:${SKILLS_UPDATE_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
+      "HEAD:refs/heads/${SKILLS_UPDATE_BRANCH}"
+      -o merge_request.create
+      -o "merge_request.target=${CI_DEFAULT_BRANCH}"
+      -o merge_request.remove_source_branch
+      -o "merge_request.title=chore(skills): update shared skills"
