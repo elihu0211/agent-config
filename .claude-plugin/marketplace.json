@@ -1,0 +1,32 @@
+{
+  "name": "elihu0211-skills",
+  "owner": {
+    "name": "elihu0211"
+  },
+  "metadata": {
+    "description": "Vendor-neutral Agent Skills shared across my projects"
+  },
+  "plugins": [
+    {
+      "name": "maintain-agent-context",
+      "description": "Keep AGENTS.md, CLAUDE.md and installed skills vendor-neutral and non-duplicated",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/maintain-agent-context"]
+    },
+    {
+      "name": "structure-docs",
+      "description": "Organize a repo's documentation with the Diátaxis framework",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/structure-docs"]
+    },
+    {
+      "name": "dsrm-technical-report",
+      "description": "Write or review a DSRM technical report, including Taiwanese master's technical reports",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/dsrm-technical-report"]
+    }
+  ]
+}

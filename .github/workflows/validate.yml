@@ -1,0 +1,27 @@
+name: validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  skills:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      - name: Validate skills and marketplace
+        run: uv run scripts/validate.py
+      - name: Skills CLI discovers every skill
+        env:
+          DISABLE_TELEMETRY: "1"
+        run: |
+          listed=$(npx --yes skills@1.7.4 add . --list < /dev/null 2>&1)
+          for dir in skills/*/; do
+            name=$(basename "$dir")
+            grep -q "$name" <<<"$listed" || { echo "skills CLI does not list $name"; exit 1; }
+          done
