@@ -25,10 +25,12 @@ jobs:
       - name: Skills CLI discovers every skill
         env:
           DISABLE_TELEMETRY: "1"
+          NO_COLOR: "1"
         run: |
           # Match names in the CLI's output rather than parse its layout, which differs
-          # between a terminal and CI.
-          listed=$(npx --yes skills@1.7.4 add . --list < /dev/null 2>&1)
+          # between a terminal and CI. Names are wrapped in ANSI colour codes there, and
+          # the trailing "m" of a code defeats grep -w, so strip the codes first.
+          listed=$(npx --yes skills@1.7.4 add . --list < /dev/null 2>&1 | sed 's/\x1b\[[0-9;?]*[A-Za-z]//g')
           for dir in skills/*/; do
             name=$(basename "$dir")
             grep -qw -- "$name" <<<"$listed" || { echo "skills CLI does not list $name"; exit 1; }
