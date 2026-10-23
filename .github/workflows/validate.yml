@@ -16,12 +16,22 @@ jobs:
       - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
       - name: Validate skills and marketplace
         run: uv run scripts/validate.py
+      - name: No SKILL.md outside skills/
+        run: |
+          # The skills CLI scans the whole repo for SKILL.md; one outside skills/ (such as
+          # a template) would be installable with --skill '*'.
+          stray=$(find . -name SKILL.md -not -path './skills/*' -not -path './.git/*')
+          if [ -n "$stray" ]; then echo "SKILL.md outside skills/:"; echo "$stray"; exit 1; fi
       - name: Skills CLI discovers every skill
         env:
           DISABLE_TELEMETRY: "1"
+          NO_COLOR: "1"
         run: |
-          listed=$(npx --yes skills@1.7.4 add . --list < /dev/null 2>&1)
+          # Match names in the CLI's output rather than parse its layout, which differs
+          # between a terminal and CI. Names are wrapped in ANSI colour codes there, and
+          # the trailing "m" of a code defeats grep -w, so strip the codes first.
+          listed=$(npx --yes skills@1.7.4 add . --list < /dev/null 2>&1 | sed 's/\x1b\[[0-9;?]*[A-Za-z]//g')
           for dir in skills/*/; do
             name=$(basename "$dir")
-            grep -q "$name" <<<"$listed" || { echo "skills CLI does not list $name"; exit 1; }
+            grep -qw -- "$name" <<<"$listed" || { echo "skills CLI does not list $name"; exit 1; }
           done
