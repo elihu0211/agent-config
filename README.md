@@ -6,7 +6,7 @@ Vendor-neutral [Agent Skills](https://agentskills.io/specification) shared acros
 
 ```
 skills/<name>/                      one skill: SKILL.md (+ references/, scripts/, assets/)
-template/                           starting point for a new skill
+template/                           starting point for a new skill (SKILL.template.md)
 .claude-plugin/marketplace.json     Claude Code plugin marketplace (one plugin per skill)
 scripts/validate.py                 spec and repo-rule validation (CI runs it)
 .github/workflows/validate.yml      runs the validation on every PR
@@ -70,7 +70,7 @@ Use one channel per project: a skill installed both ways loads twice.
 
 ## Change or add a skill
 
-1. Copy [`template/`](template) to `skills/<name>/` (or edit an existing skill). Conventions: [`AGENTS.md`](AGENTS.md).
+1. Copy [`template/`](template) to `skills/<name>/` and rename `SKILL.template.md` to `SKILL.md` (or edit an existing skill). The template is not named `SKILL.md` because the skills CLI would otherwise offer it as an installable skill. Conventions: [`AGENTS.md`](AGENTS.md).
 2. Add the skill to [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json).
 3. Run `uv run scripts/validate.py`, then open a PR.
 
