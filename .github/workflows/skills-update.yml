@@ -1,11 +1,10 @@
-# Reusable workflow for consuming repos on GitHub: refresh installed skills and open
-# (or update) a pull request when anything changed. It never pushes to the default
-# branch — skills run with the agent's full permissions, so a human merges.
+# GitHub 消費端 repo 用的可重用 workflow：更新已安裝的技能，有變更就開（或更新）一個
+# pull request。它不會推到預設分支——技能以 agent 的完整權限執行，所以由人合併。
 #
-# Caller (in the consuming repo, .github/workflows/skills-update.yml):
+# 呼叫端（在消費端 repo 的 .github/workflows/skills-update.yml）：
 #
 #   on:
-#     schedule: [{ cron: "0 21 * * 0" }]   # Monday 05:00 Asia/Taipei
+#     schedule: [{ cron: "0 21 * * 0" }]   # 週一 05:00 Asia/Taipei
 #     workflow_dispatch:
 #   permissions:
 #     contents: write
@@ -14,18 +13,18 @@
 #     update:
 #       uses: elihu0211/agent-skills/.github/workflows/skills-update.yml@v1
 #
-# The repo setting "Allow GitHub Actions to create and approve pull requests" must be on.
+# repo 設定「Allow GitHub Actions to create and approve pull requests」必須開啟。
 name: skills-update
 
 on:
   workflow_call:
     inputs:
       skills-cli-version:
-        description: Version of the skills CLI (npm package "skills")
+        description: skills CLI 的版本（npm 套件 "skills"）
         type: string
         default: "1.7.4"
       branch:
-        description: Branch the update is pushed to
+        description: 更新要推送到的分支
         type: string
         default: chore/skills-update
 
@@ -45,19 +44,19 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
-      - name: Update installed skills
+      - name: 更新已安裝的技能
         run: npx --yes "skills@${{ inputs.skills-cli-version }}" update -p -y < /dev/null
-      - name: Open or update the pull request
+      - name: 開啟或更新 pull request
         run: |
           if [ -z "$(git status --porcelain -- .agents skills-lock.json)" ]; then
-            echo "Skills are up to date."
+            echo "技能已是最新。"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B "$BRANCH"
-          # Some repos ignore .agents/ and track only the lock file; git add fails on an
-          # explicitly named ignored path, so add it only when it is tracked.
+          # 有些 repo 忽略 .agents/、只追蹤 lock 檔；對明確指名的被忽略路徑 git add 會失敗，
+          # 所以只有在它被追蹤時才加入。
           git add -A -- skills-lock.json
           git check-ignore -q .agents || git add -A -- .agents
           git commit -m "chore(skills): update shared skills"
@@ -65,5 +64,5 @@ jobs:
           if [ -z "$(gh pr list --head "$BRANCH" --state open --json number --jq '.[].number')" ]; then
             gh pr create --head "$BRANCH" --base "${{ github.event.repository.default_branch }}" \
               --title "chore(skills): update shared skills" \
-              --body "Automated by the skills-update workflow. Review the diff under \`.agents/skills/\`: skills run with the agent's full permissions."
+              --body "由 skills-update workflow 自動產生。請審查 \`.agents/skills/\` 下的 diff：技能以 agent 的完整權限執行。"
           fi

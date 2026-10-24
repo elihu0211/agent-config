@@ -1,3 +1,3 @@
-# Reference
+# 參考
 
-Detail the agent loads only when SKILL.md points here. Keep each file focused on one topic.
+只有在 SKILL.md 指向這裡時，agent 才會載入的細節。每個檔案只談一個主題。

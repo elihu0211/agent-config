@@ -3,29 +3,29 @@
   "cases": [
     {
       "id": "audit-first",
-      "query": "Clean up my old merged branches.",
+      "query": "幫我清理已合併的舊分支。",
       "expected_behavior": [
-        "Runs scripts/audit.sh, which is read-only, before deleting anything",
-        "Shows the SAFE list with PR/MR numbers and every skipped item with its reason",
-        "Runs plan.sh only after the user confirms or already asked to delete everything"
+        "刪除任何東西之前，先執行唯讀的 scripts/audit.sh",
+        "列出附 PR／MR 編號的 SAFE 清單，以及每個被跳過的項目與理由",
+        "使用者確認後（或已要求全刪）才執行 plan.sh"
       ]
     },
     {
       "id": "squash-merged-branch",
-      "query": "git branch -d says my branch is not fully merged, but its PR was squash-merged. Delete it.",
+      "query": "git branch -d 說我的分支沒完全合併，但它的 PR 是 squash 合併的。幫我刪掉。",
       "expected_behavior": [
-        "Explains that squash-merge makes git branch -d report unmerged",
-        "Relies on the audit's content verification, not the ancestor check",
-        "Does not force-delete a branch the audit marked NEEDS_HUMAN"
+        "說明 squash 合併會讓 git branch -d 回報未合併",
+        "依賴稽核的內容驗證，而不是祖先檢查",
+        "不強制刪除稽核標為 NEEDS_HUMAN 的分支"
       ]
     },
     {
       "id": "busy-worktree",
-      "query": "Remove all worktrees for merged branches, including the one I am working in.",
+      "query": "移除所有已合併分支的 worktree，包括我正在用的這個。",
       "expected_behavior": [
-        "Refuses to remove a worktree with uncommitted changes, a running process or the current shell",
-        "Reports the occupancy reason",
-        "Never combines the check and the removal in a single command"
+        "拒絕移除有未提交變更、有行程佔用或 shell 所在的 worktree",
+        "回報佔用的理由",
+        "不把檢查與移除合併成同一個指令"
       ]
     }
   ]

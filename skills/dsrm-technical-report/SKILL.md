@@ -1,12 +1,9 @@
 ---
 name: dsrm-technical-report
 description: >-
-  Write or review a technical report structured by the Design Science Research
-  Methodology (DSRM), including Taiwanese master's technical reports that replace
-  a thesis (學位授予法 §7, 認定準則 §10). Use when drafting, restructuring, or
-  reviewing a report about a built system or artifact, mapping chapters to DSRM
-  activities, classifying evaluations (FEDS), or checking a report before degree
-  review or publication.
+  撰寫或審查以設計科學研究方法論（DSRM）組織的技術報告，包括取代學位論文的臺灣碩士技術報告
+  （學位授予法 §7、認定準則 §10）。用於起草、重整或審查「關於已建成系統或產物」的報告，
+  把章節對應到 DSRM 活動、為評估分類（FEDS），或在學位審查或發表前檢核報告時。
 license: MIT
 ---
 

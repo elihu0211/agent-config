@@ -14,26 +14,25 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
-      - name: Validate skills and marketplace
+      - name: 驗證技能與 marketplace
         run: uv run scripts/validate.py
-      - name: Skill script tests
+      - name: 技能腳本測試
         run: for t in skills/*/scripts/test.sh; do [ -f "$t" ] && bash "$t"; done
-      - name: No SKILL.md outside skills/
+      - name: skills/ 之外不得有 SKILL.md
         run: |
-          # The skills CLI scans the whole repo for SKILL.md; one outside skills/ (such as
-          # a template) would be installable with --skill '*'.
+          # skills CLI 會掃整個 repo 找 SKILL.md；放在 skills/ 之外的（例如範本）
+          # 會被 --skill '*' 當成可安裝技能。
           stray=$(find . -name SKILL.md -not -path './skills/*' -not -path './.git/*')
-          if [ -n "$stray" ]; then echo "SKILL.md outside skills/:"; echo "$stray"; exit 1; fi
-      - name: Skills CLI discovers every skill
+          if [ -n "$stray" ]; then echo "skills/ 之外有 SKILL.md："; echo "$stray"; exit 1; fi
+      - name: skills CLI 能找到每個技能
         env:
           DISABLE_TELEMETRY: "1"
           NO_COLOR: "1"
         run: |
-          # Match names in the CLI's output rather than parse its layout, which differs
-          # between a terminal and CI. Names are wrapped in ANSI colour codes there, and
-          # the trailing "m" of a code defeats grep -w, so strip the codes first.
+          # 比對 CLI 輸出中的名稱，而不是解析版面（終端機與 CI 的版面不同）。
+          # CI 中名稱被 ANSI 色碼包住，色碼結尾的 "m" 會讓 grep -w 失效，所以先去掉色碼。
           listed=$(npx --yes skills@1.7.4 add . --list < /dev/null 2>&1 | sed 's/\x1b\[[0-9;?]*[A-Za-z]//g')
           for dir in skills/*/; do
             name=$(basename "$dir")
-            grep -qw -- "$name" <<<"$listed" || { echo "skills CLI does not list $name"; exit 1; }
+            grep -qw -- "$name" <<<"$listed" || { echo "skills CLI 沒有列出 $name"; exit 1; }
           done

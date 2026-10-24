@@ -1,31 +1,31 @@
 # GitLab
 
-Needs `glab auth login`. Pass `--hostname <host>` to every `glab api` call: without it the CLI targets gitlab.com, and the resulting 404 looks like an auth failure. Use `:id` instead of a hard-coded project path.
+需要先 `glab auth login`。每個 `glab api` 都要帶 `--hostname <host>`：不帶會預設打 gitlab.com，回來的 404 看起來像認證失敗。用 `:id`，不要寫死專案路徑。
 
-Check the identity first: `glab auth status --hostname <host>`. A token bound to a single project bot cannot call the API of other projects (404/401) even when SSH push works; log in with a personal or group token.
+先確認身分：`glab auth status --hostname <host>`。只綁單一專案 bot 的 token，即使 SSH push 可用，也不能呼叫其他專案的 API（404／401）；請改用個人或群組 token 登入。
 
-## Open
+## 開啟
 
-`glab mr create` can hang without a TTY. In an agent shell always:
+沒有 TTY 時 `glab mr create` 可能卡住。在 agent shell 裡一律這樣跑：
 
 ```bash
 GLAB_NO_PROMPT=1 perl -e 'alarm 60; exec @ARGV' glab mr create \
-  --source-branch <branch> --target-branch <default> \
+  --source-branch <分支> --target-branch <預設分支> \
   --squash-before-merge --remove-source-branch \
-  --title "<type(scope): summary>" --description "$(cat body.md)" --yes </dev/null
+  --title "<type(scope): 摘要>" --description "$(cat body.md)" --yes </dev/null
 ```
 
-If it times out, list the MRs first: the MR may exist already. If not, use the API and do not retry the command:
+逾時就先列出 MR：MR 可能已經建好。沒有的話改用 API，不要重試指令：
 
 ```bash
 glab api --hostname <host> -X POST "projects/:id/merge_requests" \
-  -f source_branch=<branch> -f target_branch=<default> -f squash=true \
-  -f remove_source_branch=true -f "title=<title>" -F "description=@body.md"
+  -f source_branch=<分支> -f target_branch=<預設分支> -f squash=true \
+  -f remove_source_branch=true -f "title=<標題>" -F "description=@body.md"
 ```
 
-## Auto-merge
+## auto-merge
 
-Use the API. `glab mr merge` can print a success message while only queueing, or fail with 405 while the pipeline is still starting (upstream issue [#7243](https://gitlab.com/gitlab-org/cli/-/work_items/7243)):
+用 API。`glab mr merge` 可能印出成功訊息卻只是排入佇列，或在 pipeline 還在啟動時回 405（上游 issue [#7243](https://gitlab.com/gitlab-org/cli/-/work_items/7243)）：
 
 ```bash
 glab api --hostname <host> -X PUT "projects/:id/merge_requests/<iid>/merge" \
@@ -33,33 +33,33 @@ glab api --hostname <host> -X PUT "projects/:id/merge_requests/<iid>/merge" \
   -f sha="$(git rev-parse HEAD)"
 ```
 
-`sha` is required even though the docs mark it optional; a local commit that was not pushed gives 409. Instances older than 17.11 take `merge_when_pipeline_succeeds` instead of `auto_merge`.
+`sha` 必填，即使文件標為選填；沒 push 的本機 commit 會得到 409。17.11 之前的實例要用 `merge_when_pipeline_succeeds`，不是 `auto_merge`。
 
-## Verify
+## 查驗
 
 ```bash
 glab api --hostname <host> "projects/:id/merge_requests/<iid>" \
   | python3 -c 'import json,sys;d=json.load(sys.stdin);print(d["state"],d["merge_when_pipeline_succeeds"],d["detailed_merge_status"],d.get("squash_commit_sha"))'
 ```
 
-- `merged`: done (squash merges have no merge commit; read `squash_commit_sha`).
-- `opened`, true, `ci_still_running` or `approvals_syncing`: queued correctly.
-- `opened`, false: not armed. Causes: failed pipeline, unresolved discussion, or a newer push reset the flag.
+- `merged`：完成（squash 合併沒有 merge commit，讀 `squash_commit_sha`）。
+- `opened`、true、`ci_still_running` 或 `approvals_syncing`：已正確排入佇列。
+- `opened`、false：沒有設定成功。原因：pipeline 失敗、討論串未解決，或較新的 push 重置了旗標。
 
-## After a further push to the same MR
+## 對同一個 MR 再 push 之後
 
-The flag resets and an older running pipeline is not auto-cancelled. Re-arm auto-merge with a fresh `sha`, and cancel stale pipelines with `POST projects/:id/pipelines/<id>/cancel`. With merged-results pipelines the pipeline `sha` is a temporary merge commit, so never compare it with `HEAD`; keep `head_pipeline.id` and the newest pipeline and cancel only the others.
+旗標會重置，仍在跑的舊 pipeline 也不會自動取消。用新的 `sha` 重新設定 auto-merge，並用 `POST projects/:id/pipelines/<id>/cancel` 取消過期的 pipeline。使用 merged-results pipeline 時，pipeline 的 `sha` 是暫時的 merge commit，絕不要拿來和 `HEAD` 比對；保留 `head_pipeline.id` 與最新的 pipeline，只取消其他的。
 
-## A pipeline that can never succeed
+## 永遠不會成功的 pipeline
 
-If jobs target a runner that does not exist the pipeline stays `running` and a queued auto-merge waits forever. Confirm by reading the job list, check `only_allow_merge_if_pipeline_succeeds` is false in the project settings, cancel the pipeline, then merge directly without `auto_merge`.
+job 指向不存在的 runner 時，pipeline 會一直是 `running`，排隊中的 auto-merge 會永遠等下去。先讀 job 清單確認，檢查專案設定的 `only_allow_merge_if_pipeline_succeeds` 是 false，取消該 pipeline，再不帶 `auto_merge` 直接合併。
 
-## Push options (when the API is unavailable)
+## push 選項（API 不可用時）
 
 ```bash
-git push -u origin HEAD -o merge_request.create -o merge_request.target=<default> \
+git push -u origin HEAD -o merge_request.create -o merge_request.target=<預設分支> \
   -o merge_request.remove_source_branch -o merge_request.squash \
-  -o merge_request.title="<title>" -o merge_request.description="line1%0Aline2"
+  -o merge_request.title="<標題>" -o merge_request.description="第一行%0A第二行"
 ```
 
-The description cannot contain real newlines; use `%0A`.
+描述不能含真正的換行；用 `%0A`。

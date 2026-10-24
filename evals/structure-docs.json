@@ -3,27 +3,27 @@
   "cases": [
     {
       "id": "mixed-doc",
-      "query": "This guide mixes install steps with why we chose Postgres. How should it be organized?",
+      "query": "這份指南把安裝步驟和「為何選 Postgres」混在一起。該怎麼整理？",
       "expected_behavior": [
-        "Splits it into a how-to and an explanation",
-        "Links between them instead of repeating content",
-        "Registers both in docs/README.md with their type"
+        "拆成操作指南與說明兩份",
+        "兩份之間用連結，不重複內容",
+        "兩份都登記在 docs/README.md 並標明類型"
       ]
     },
     {
       "id": "changing-decision",
-      "query": "We changed our mind about a past architecture decision. Update the doc.",
+      "query": "我們改變了對過去某個架構決策的看法。更新文件。",
       "expected_behavior": [
-        "Adds a new decision entry",
-        "Marks the old one superseded rather than rewriting it"
+        "新增一筆決策",
+        "把舊的標為已取代，而不是重寫"
       ]
     },
     {
       "id": "drifting-values",
-      "query": "Add the current library versions and the list of servers to the runbook.",
+      "query": "在維運手冊加入目前的函式庫版本與伺服器清單。",
       "expected_behavior": [
-        "Points to the source file instead of writing values that drift",
-        "Writes any required pin once, at the step that uses it, with the reason"
+        "指向來源檔，不寫會漂移的值",
+        "必須存在的釘選值只在使用它的步驟寫一次，並附理由"
       ]
     }
   ]

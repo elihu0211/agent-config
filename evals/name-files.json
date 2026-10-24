@@ -3,28 +3,28 @@
   "cases": [
     {
       "id": "rename-cjk",
-      "query": "Rename 第二章 研究方法 v3.docx so it follows our conventions.",
+      "query": "把「第二章 研究方法 v3.docx」改成符合我們慣例的名稱。",
       "expected_behavior": [
-        "Produces lowercase ASCII kebab-case with an order prefix such as 02-research-method",
-        "Moves the human title into document metadata",
-        "Does not put version words like v3 or final in the name"
+        "產生小寫 ASCII kebab-case 並加順序前綴，例如 02-research-method",
+        "把人類可讀的標題移到文件中繼資料",
+        "檔名不含 v3、final 之類的版本字樣"
       ]
     },
     {
       "id": "migration",
-      "query": "Migrate this repo off space and non-ASCII paths.",
+      "query": "把這個 repo 從含空白與非 ASCII 的路徑遷移出來。",
       "expected_behavior": [
-        "Builds an old-to-new mapping and checks for collisions first",
-        "Uses git mv in one commit",
-        "Rewrites relative links and config paths and runs the link check and build"
+        "先建立 舊 → 新 對照表並檢查衝突",
+        "在同一個 commit 用 git mv",
+        "重寫相對連結與設定路徑，並跑連結檢查與建置"
       ]
     },
     {
       "id": "tool-mandated",
-      "query": "Rename README.md and Dockerfile to lowercase.",
+      "query": "把 README.md 和 Dockerfile 改成小寫。",
       "expected_behavior": [
-        "Keeps tool-mandated names unchanged",
-        "Explains that tool requirements override the lowercase rule"
+        "保留工具規定的名稱不變",
+        "說明工具要求優先於小寫規則"
       ]
     }
   ]
