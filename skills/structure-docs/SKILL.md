@@ -4,6 +4,7 @@ description: >-
   Organize a repo's documentation with the Diátaxis framework. Use when adding,
   splitting, or reviewing files under docs/, writing a runbook, guide, reference,
   or design-decision page, or when a doc mixes steps with rationale.
+license: MIT
 ---
 
 # Structure docs (Diátaxis)

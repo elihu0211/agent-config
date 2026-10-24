@@ -5,6 +5,7 @@ description: >-
   (papers, reports, shared assets). Use when creating, renaming, or moving files
   or directories, choosing where documents, papers or reports live, migrating a
   repo away from non-ASCII or space-containing paths, or reviewing names in a PR.
+license: MIT
 ---
 
 # Name files and directories

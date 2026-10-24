@@ -84,3 +84,7 @@ git tag -f v1 origin/main && git push -f origin v1
 ```
 
 Skill content itself is not tagged: `npx skills update` follows the default branch and the consumer's merge request is the review point. A breaking change to the CI templates gets a new major tag (`v2`) instead of moving `v1`.
+
+## License
+
+[MIT](LICENSE). Each `SKILL.md` carries `license: MIT` so the terms travel with an installed copy.
