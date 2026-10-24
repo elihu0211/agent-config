@@ -1,38 +1,39 @@
 # agent-skills
 
-Vendor-neutral [Agent Skills](https://agentskills.io/specification) shared across my projects. One skill per directory under [`skills/`](skills); each `SKILL.md` front matter says what the skill does and when it applies, so the directory is the index.
+跨專案共用、與廠商無關的 [Agent Skills](https://agentskills.io/specification)（個人使用）。每個技能一個目錄，放在 [`skills/`](skills) 下；每份 `SKILL.md` 的 front matter 說明技能做什麼、何時適用，所以目錄本身就是索引。
 
-## Layout
+## 結構
 
 ```
-skills/<name>/                      one skill: SKILL.md (+ references/, scripts/, assets/)
-template/                           starting point for a new skill (SKILL.template.md)
-.claude-plugin/marketplace.json     Claude Code plugin marketplace (one plugin per skill)
-scripts/validate.py                 spec and repo-rule validation (CI runs it)
-.github/workflows/validate.yml      runs the validation on every PR
-.github/workflows/skills-update.yml reusable workflow for consuming repos on GitHub
-ci/skills-update.gitlab-ci.yml      CI template for consuming repos on GitLab
+skills/<name>/                      一個技能：SKILL.md（+ references/、scripts/、assets/）
+evals/<name>.json                   每個技能至少 3 個評估情境（不隨技能安裝）
+template/                           新技能的起點（SKILL.template.md）
+.claude-plugin/marketplace.json     Claude Code plugin marketplace（一個技能對應一個 plugin）
+scripts/validate.py                 規格與 repo 規則驗證（CI 會執行）
+.github/workflows/validate.yml      每個 PR 都跑驗證
+.github/workflows/skills-update.yml GitHub 消費端 repo 用的可重用 workflow
+ci/skills-update.gitlab-ci.yml      GitLab 消費端 repo 用的 CI 範本
 ```
 
-## Install into a project (any agent)
+## 安裝到專案（任何 agent）
 
-Projects install with the [`skills` CLI](https://github.com/vercel-labs/skills). It writes `.agents/skills/<name>/` and pins the source and content hash in `skills-lock.json`:
+專案用 [`skills` CLI](https://github.com/vercel-labs/skills) 安裝。它會寫入 `.agents/skills/<name>/`，並把來源與內容雜湊釘在 `skills-lock.json`：
 
 ```bash
 DISABLE_TELEMETRY=1 npx skills add elihu0211/agent-skills --skill <name> -a codex -y
 ```
 
-`.agents/skills/` is read by Codex, Cursor, GitHub Copilot and Gemini CLI. Claude Code only scans `.claude/skills/`, so link each skill there: `.claude/skills/<name> → ../../.agents/skills/<name>`. The [docs](https://code.claude.com/docs/en/skills) cover symlinked `<name>` entries, not a symlinked `skills` directory.
+Codex、Cursor、GitHub Copilot、Gemini CLI 會讀 `.agents/skills/`。Claude Code 只掃 `.claude/skills/`，所以要把每個技能連過去：`.claude/skills/<name> → ../../.agents/skills/<name>`。[官方文件](https://code.claude.com/docs/en/skills)只涵蓋「`<name>` 項目是 symlink」，不涵蓋整個 `skills` 目錄是 symlink。
 
-## Keep projects up to date
+## 讓專案保持最新
 
-Each consuming project runs a scheduled job that executes `npx skills update -p -y` and, when anything changed, opens a merge request. Nothing is merged automatically: skills run with the agent's full permissions, so a person reviews the diff.
+每個消費端專案跑排程工作，執行 `npx skills update -p -y`，有變更就開一個合併請求。不會自動合併：技能以 agent 的完整權限執行，所以由人審 diff。
 
-**GitHub** — add `.github/workflows/skills-update.yml`:
+**GitHub** — 新增 `.github/workflows/skills-update.yml`：
 
 ```yaml
 on:
-  schedule: [{ cron: "0 21 * * 0" }]   # Monday 05:00 Asia/Taipei
+  schedule: [{ cron: "0 21 * * 0" }]   # 週一 05:00 Asia/Taipei
   workflow_dispatch:
 permissions:
   contents: write
@@ -42,9 +43,9 @@ jobs:
     uses: elihu0211/agent-skills/.github/workflows/skills-update.yml@v1
 ```
 
-Then turn on *Settings → Actions → General → Allow GitHub Actions to create and approve pull requests*.
+再開啟 *Settings → Actions → General → Allow GitHub Actions to create and approve pull requests*。
 
-**GitLab** — include the template and give the hidden job one of the repo's stages:
+**GitLab** — include 範本，並把隱藏工作指定到該 repo 的某個 stage：
 
 ```yaml
 include:
@@ -52,39 +53,39 @@ include:
 
 skills-update:
   extends: .skills-update
-  stage: <one of this repo's stages>
+  stage: <該 repo 的其中一個 stage>
 ```
 
-Then add the `SKILLS_UPDATE_TOKEN` variable and a pipeline schedule with `SKILLS_UPDATE=true`; the template header lists every step.
+接著加入 `SKILLS_UPDATE_TOKEN` 變數，以及帶 `SKILLS_UPDATE=true` 的 pipeline 排程；範本開頭列出所有步驟。
 
-## Install for yourself in Claude Code
+## 自己在 Claude Code 全域使用
 
-For skills you want in every session rather than pinned per project, add this repo as a plugin marketplace. Claude Code can refresh it in the background:
+想讓技能出現在每個 session、而不是逐專案釘版本，可把本 repo 加為 plugin marketplace，Claude Code 會在背景更新：
 
 ```
 /plugin marketplace add elihu0211/agent-skills
 /plugin install <name>@elihu0211-skills
 ```
 
-Use one channel per project: a skill installed both ways loads twice.
+每個專案只用一種管道：同一技能兩邊都裝會載入兩次。
 
-## Change or add a skill
+## 修改或新增技能
 
-1. Copy [`template/`](template) to `skills/<name>/` and rename `SKILL.template.md` to `SKILL.md` (or edit an existing skill). The template is not named `SKILL.md` because the skills CLI would otherwise offer it as an installable skill. Conventions: [`AGENTS.md`](AGENTS.md).
-2. Add the skill to [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json).
-3. Add `evals/<name>.json` with at least three cases (`query` and `expected_behavior`); they are written before the skill text, from tasks the agent gets wrong without it. They live outside `skills/` so consumers do not install them.
-4. Run `uv run scripts/validate.py` (and `bash skills/<name>/scripts/test.sh` if the skill has scripts), then open a PR.
+1. 把 [`template/`](template) 複製成 `skills/<name>/`，並把 `SKILL.template.md` 改名為 `SKILL.md`（或直接改既有技能）。範本不叫 `SKILL.md`，是因為 skills CLI 會把它當成可安裝技能。規範見 [`AGENTS.md`](AGENTS.md)。
+2. 把技能加進 [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)。
+3. 新增 `evals/<name>.json`，至少 3 個情境（`query` 與 `expected_behavior`）；先從「沒有此技能時 agent 會做錯的任務」寫起，再寫技能本文。放在 `skills/` 之外，消費端不會裝到。
+4. 執行 `uv run scripts/validate.py`（技能若有腳本，也跑 `bash skills/<name>/scripts/test.sh`），再開 PR。
 
-## Release
+## 發布
 
-Consumers reference the CI templates at the `v1` tag. After merging a change to `ci/` or `.github/workflows/skills-update.yml`, move the tag:
+消費端以 `v1` 標籤引用 CI 範本。合併 `ci/` 或 `.github/workflows/skills-update.yml` 的變更後，要移動標籤：
 
 ```bash
 git tag -f v1 origin/main && git push -f origin v1
 ```
 
-Skill content itself is not tagged: `npx skills update` follows the default branch and the consumer's merge request is the review point. A breaking change to the CI templates gets a new major tag (`v2`) instead of moving `v1`.
+技能內容本身不打標籤：`npx skills update` 跟隨預設分支，消費端的合併請求就是審查點。CI 範本若有破壞性變更，改發新的主版本（`v2`），不移動 `v1`。
 
-## License
+## 授權
 
-[MIT](LICENSE). Each `SKILL.md` carries `license: MIT` so the terms travel with an installed copy.
+[MIT](LICENSE)。每份 `SKILL.md` 都帶 `license: MIT`，讓授權條款隨安裝的副本一起走。

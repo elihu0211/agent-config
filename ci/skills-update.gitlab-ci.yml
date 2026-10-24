@@ -1,22 +1,21 @@
-# GitLab template for consuming repos: refresh installed skills and open (or update) a
-# merge request when anything changed. It never pushes to the default branch — skills
-# run with the agent's full permissions, so a human merges.
+# GitLab 消費端 repo 用的範本：更新已安裝的技能，有變更就開（或更新）一個合併請求。
+# 它不會推到預設分支——技能以 agent 的完整權限執行，所以由人合併。
 #
-# The job is hidden (.skills-update) because consuming repos define different stages,
-# and a pipeline made only of .pre/.post jobs does not run. Consumer setup:
+# 這個工作是隱藏的（.skills-update），因為各消費端 repo 的 stage 不同，
+# 而只有 .pre/.post 工作的 pipeline 不會執行。消費端設定：
 #
 #   1. .gitlab-ci.yml:
 #        include:
 #          - remote: https://raw.githubusercontent.com/elihu0211/agent-skills/v1/ci/skills-update.gitlab-ci.yml
 #        skills-update:
 #          extends: .skills-update
-#          stage: <one of this repo's stages>
-#   2. CI/CD variable SKILLS_UPDATE_TOKEN (masked, protected): a project access token,
-#      role Developer, scope write_repository. Pushing with it and the merge_request
-#      push options is all the job needs; the protected default branch stays closed to it.
-#   3. Pipeline schedule on the default branch (e.g. weekly) with variable SKILLS_UPDATE=true.
-#      The repo's workflow:rules must allow that pipeline.
-#   4. Keep the repo's other jobs off that schedule, e.g. first rule in each:
+#          stage: <該 repo 的其中一個 stage>
+#   2. CI/CD 變數 SKILLS_UPDATE_TOKEN（masked、protected）：專案存取權杖，
+#      角色 Developer、scope write_repository。工作只需要用它搭配 merge_request
+#      push 選項推送；受保護的預設分支對它維持關閉。
+#   3. 在預設分支建立 pipeline 排程（例如每週），帶變數 SKILLS_UPDATE=true。
+#      該 repo 的 workflow:rules 必須允許這條 pipeline。
+#   4. 讓該 repo 的其他工作不在這個排程裡跑，例如在每個工作的第一條規則：
 #        - if: $SKILLS_UPDATE == "true"
 #          when: never
 
@@ -34,15 +33,15 @@
     - npx --yes "skills@${SKILLS_CLI_VERSION}" update -p -y < /dev/null
     - |
       if [ -z "$(git status --porcelain -- .agents skills-lock.json)" ]; then
-        echo "Skills are up to date."
+        echo "技能已是最新。"
         exit 0
       fi
-    - test -n "$SKILLS_UPDATE_TOKEN" || { echo "SKILLS_UPDATE_TOKEN is not set"; exit 1; }
+    - test -n "$SKILLS_UPDATE_TOKEN" || { echo "尚未設定 SKILLS_UPDATE_TOKEN"; exit 1; }
     - git config user.name "skills-update"
     - git config user.email "skills-update@${CI_SERVER_HOST}"
     - git checkout -B "$SKILLS_UPDATE_BRANCH"
-    # Some repos ignore .agents/ and track only the lock file; git add fails on an
-    # explicitly named ignored path, so add it only when it is tracked.
+    # 有些 repo 忽略 .agents/、只追蹤 lock 檔；對明確指名的被忽略路徑 git add 會失敗，
+    # 所以只有在它被追蹤時才加入。
     - git add -A -- skills-lock.json
     - git check-ignore -q .agents || git add -A -- .agents
     - git commit -m "chore(skills): update shared skills"

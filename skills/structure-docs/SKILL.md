@@ -1,34 +1,33 @@
 ---
 name: structure-docs
 description: >-
-  Organize a repo's documentation with the Diátaxis framework. Use when adding,
-  splitting, or reviewing files under docs/, writing a runbook, guide, reference,
-  or design-decision page, or when a doc mixes steps with rationale.
+  以 Diátaxis 架構組織 repo 的文件。用於新增、拆分或審查 docs/ 下的檔案，
+  撰寫維運手冊、指南、參考或設計決策頁面，或發現一份文件把操作步驟與背景理由混在一起時。
 license: MIT
 ---
 
-# Structure docs (Diátaxis)
+# 文件結構（Diátaxis）
 
-Each document does one job. Pick the type first, then write.
+每份文件只做一件事。先選類型，再動筆。
 
-| Type | Reader wants to | Write as | Never include |
-|------|-----------------|----------|---------------|
-| Tutorial | learn by doing, start to finish | ordered steps with a visible result | background, options |
-| How-to | finish one task | steps for a competent reader | teaching, rationale |
-| Reference | look something up | dry, structured like the thing described | instructions, opinions |
-| Explanation | understand why | prose, trade-offs, rejected options | commands to run |
+| 類型 | 讀者想要 | 寫成 | 絕不放 |
+|------|----------|------|--------|
+| 教學（Tutorial） | 邊做邊學，從頭到尾 | 有順序的步驟，結果看得見 | 背景、選項 |
+| 操作指南（How-to） | 完成一件任務 | 給有能力的讀者的步驟 | 教學、理由 |
+| 參考（Reference） | 查東西 | 精簡、結構與被描述的對象一致 | 指示、意見 |
+| 說明（Explanation） | 理解為什麼 | 散文、取捨、被否決的選項 | 要執行的指令 |
 
-Source: [diataxis.fr](https://diataxis.fr). Decision records are Explanation.
+來源：[diataxis.fr](https://diataxis.fr)。決策紀錄屬於「說明」。
 
-## Rules
+## 規則
 
-1. **One type per file.** If a file needs two, split it; link instead of repeating.
-2. **Register every doc** in the repo's `docs/README.md` with its type. Create that index if missing; it is the single index (do not also list files in `AGENTS.md`).
-3. **Do not write values that drift** (versions, counts, hostnames, file lists). Point to the source file. A pin that must exist is written once, at the step that uses it, with the reason.
-4. **Decisions are append-only.** Each carries a status (adopted, planned, accepted gap, superseded). To change one, add a new entry and mark the old one superseded; do not rewrite it.
-5. **Docs change in the same change as the code or manifest** they describe.
-6. **Keep it short.** Cut anything the reader cannot act on or look up elsewhere; link official docs for depth.
+1. **一個檔案一種類型。** 一份檔案需要兩種，就拆開；用連結，不要重複。
+2. **每份文件都登記**在該 repo 的 `docs/README.md`，標明類型。索引不存在就建立；它是唯一索引（不要同時在 `AGENTS.md` 列檔案）。
+3. **不要寫會漂移的值**（版本、數量、主機名稱、檔案清單）。指向來源檔。必須存在的釘選值，只在使用它的步驟寫一次，並附理由。
+4. **決策只增不改。** 每筆決策帶狀態（已採用、規劃中、接受的缺口、已取代）。要改，就新增一筆並把舊的標為已取代；不要重寫舊的。
+5. **文件與它所描述的程式碼或清單在同一個變更裡一起改。**
+6. **保持簡短。** 讀者無法據以行動、也無法在別處查到的內容就刪掉；深入內容連到官方文件。
 
-## Repo conventions win
+## repo 慣例優先
 
-If the consuming repo's `AGENTS.md` sets its own doc layout or style (language, numbering, build tooling), follow it. A repo whose docs are a single-genre publication (for example, a monograph library) does not need the four-way split.
+消費端 repo 的 `AGENTS.md` 若自訂文件結構或風格（語言、編號、建置工具），照它。文件是單一體裁出版物的 repo（例如專著文庫）不必套用四分法。

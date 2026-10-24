@@ -1,24 +1,24 @@
 ---
 name: skill-name
 description: >-
-  What this skill does, in one sentence. Use when <the situations, file types,
-  or user phrasings that should trigger it>.
+  一句話說明技能做什麼。用於「應該觸發它的情境、檔案類型或使用者說法」。
+license: MIT
 ---
 
-# Skill name
+# 技能名稱
 
-One paragraph: the outcome this skill produces and the judgment it encodes.
+一段話：這個技能產出什麼結果、封裝了哪些判斷。
 
-## Read first
+## 先讀
 
-- The consuming repo's `AGENTS.md`: its commands, layout and conventions win over this skill.
-- [references/REFERENCE.md](references/REFERENCE.md) when <condition>. Delete this line if the skill needs no reference files.
+- 消費端 repo 的 `AGENTS.md`：它的指令、結構與慣例優先於本技能。
+- 條件成立時讀 [references/REFERENCE.md](references/REFERENCE.md)。技能不需要參考檔時，刪掉這一行。
 
-## Steps
+## 步驟
 
 1. ...
 2. ...
 
-## Rules
+## 規則
 
-- Rules the agent must not break, each with its reason.
+- 不可違反的規則，每條附理由。

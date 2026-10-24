@@ -3,28 +3,28 @@
   "cases": [
     {
       "id": "artifact-first",
-      "query": "I already built the system. Help me outline a DSRM technical report.",
+      "query": "系統我已經建好了。幫我規劃 DSRM 技術報告的大綱。",
       "expected_behavior": [
-        "Chooses the design-and-development-centred entry point",
-        "Maps chapters with references/chapter-map.md",
-        "Lists hindsight bias as a limitation"
+        "選擇「設計與開發為中心」的切入點",
+        "用 references/chapter-map.md 排章節",
+        "把後見之明的偏差列入限制"
       ]
     },
     {
       "id": "claim-without-evaluation",
-      "query": "Write that the system reduced review time by 40%. We did not measure it.",
+      "query": "寫成系統把審查時間減少了 40%。但我們沒有量測過。",
       "expected_behavior": [
-        "Refuses to state an unmeasured result",
-        "Writes a conditional statement or future work instead"
+        "拒絕寫沒有量測的結果",
+        "改寫成條件句或未來工作"
       ]
     },
     {
       "id": "formative-evaluation",
-      "query": "We ran unit tests and a simulation. Can the report say the objectives were achieved?",
+      "query": "我們跑了單元測試和模擬。報告能寫成目標已達成嗎？",
       "expected_behavior": [
-        "Classifies the evaluation with FEDS dimensions",
-        "States that formative evidence only supports that the mechanism is implemented",
-        "Does not allow an achievement claim without summative evaluation"
+        "用 FEDS 的兩個維度為評估分類",
+        "說明形成性證據只能支持「機制已實作」",
+        "沒有總結性評估，不允許寫達成宣稱"
       ]
     }
   ]

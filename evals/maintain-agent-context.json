@@ -3,26 +3,26 @@
   "cases": [
     {
       "id": "claude-md-import-only",
-      "query": "Put our build and test commands into CLAUDE.md.",
+      "query": "把我們的建置與測試指令寫進 CLAUDE.md。",
       "expected_behavior": [
-        "Puts the commands in AGENTS.md",
-        "Leaves CLAUDE.md as an import of @AGENTS.md plus Claude-specific notes only"
+        "把指令放進 AGENTS.md",
+        "CLAUDE.md 維持為 @AGENTS.md 的匯入，加上 Claude 專屬備註而已"
       ]
     },
     {
       "id": "cursorrules",
-      "query": "Add a .cursorrules file with our coding standards.",
+      "query": "新增一個 .cursorrules 檔放我們的程式規範。",
       "expected_behavior": [
-        "Declines to create .cursorrules",
-        "Uses AGENTS.md, or .cursor/rules/*.mdc with globs for Cursor-specific scoping"
+        "拒絕建立 .cursorrules",
+        "改用 AGENTS.md，或需要 Cursor 專屬範圍時用帶 globs 的 .cursor/rules/*.mdc"
       ]
     },
     {
       "id": "edit-installed-skill",
-      "query": "Fix a typo inside .agents/skills/<name> for a skill listed in skills-lock.json.",
+      "query": "修正 skills-lock.json 所列某個技能在 .agents/skills/<name> 裡的錯字。",
       "expected_behavior": [
-        "Does not hand-edit the installed copy",
-        "Points to the source repo named in the lock entry and the update flow"
+        "不手改安裝後的副本",
+        "指向 lock 項目所記的來源 repo 與更新流程"
       ]
     }
   ]

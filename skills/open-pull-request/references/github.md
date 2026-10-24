@@ -1,31 +1,31 @@
 # GitHub
 
-Needs `gh auth login`.
+需要先 `gh auth login`。
 
-## Open
-
-```bash
-gh pr create --title "<type(scope): summary>" --body-file body.md
-```
-
-`body.md` holds a Summary section (what and why) and a Test plan checklist.
-
-## Auto-merge
+## 開啟
 
 ```bash
-gh pr merge <number> --auto --squash --delete-branch
+gh pr create --title "<type(scope): 摘要>" --body-file body.md
 ```
 
-If CI has not started yet, wait a few seconds and retry once.
+`body.md` 含「摘要」（做什麼、為什麼）與「測試計畫」檢核表。
 
-## Verify
+## auto-merge
 
 ```bash
-gh pr view <number> --json state,autoMergeRequest,mergeStateStatus
+gh pr merge <編號> --auto --squash --delete-branch
 ```
 
-`autoMergeRequest: null` means auto-merge is **not** armed. Two known causes: the repository has auto-merge disabled (`gh api repos/{owner}/{repo} --jq .allow_auto_merge`), or there are no required checks, in which case `--auto` merges immediately instead of queueing. Check the repository setting before assuming the command worked.
+CI 尚未啟動時，等幾秒再重試一次。
 
-## Failures to recognise
+## 查驗
 
-- Every job fails to start with an account billing or spending-limit message: this is an account-level problem, not the change. Say so and stop; do not retry merges.
+```bash
+gh pr view <編號> --json state,autoMergeRequest,mergeStateStatus
+```
+
+`autoMergeRequest: null` 代表 auto-merge **沒有**設定成功。已知兩種原因：repo 關閉了 auto-merge（`gh api repos/{owner}/{repo} --jq .allow_auto_merge`），或沒有必要的 checks——這時 `--auto` 會直接合併而不是排隊。不要假設指令成功，先查 repo 設定。
+
+## 要能辨識的失敗
+
+- 每個 job 都因帳號帳務或額度上限而無法啟動：這是帳號層級問題，與變更無關。說明後停止，不要反覆重試合併。
