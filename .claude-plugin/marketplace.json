@@ -44,39 +44,21 @@
       ]
     },
     {
-      "name": "github-pr",
-      "description": "Branch, commit, push, open a GitHub PR with squash auto-merge",
+      "name": "open-pull-request",
+      "description": "Open a PR or MR on GitHub or GitLab with squash auto-merge and verified state",
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/github-pr"
+        "./skills/open-pull-request"
       ]
     },
     {
-      "name": "gitlab-mr",
-      "description": "Open a GitLab MR with conventional-commit title and auto-merge",
+      "name": "clean-merged-branches",
+      "description": "Audit and delete merged branches and worktrees with a verified plan",
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/gitlab-mr"
-      ]
-    },
-    {
-      "name": "github-branch-cleanup",
-      "description": "Clean up merged GitHub branches and worktrees",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/github-branch-cleanup"
-      ]
-    },
-    {
-      "name": "gitlab-branch-cleanup",
-      "description": "Clean up merged GitLab branches and worktrees",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/gitlab-branch-cleanup"
+        "./skills/clean-merged-branches"
       ]
     }
   ]
