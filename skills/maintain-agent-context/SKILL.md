@@ -4,6 +4,7 @@ description: >-
   Maintain vendor-neutral agent instructions in a repo. Use when editing
   AGENTS.md, CLAUDE.md, .agents/skills, skills-lock.json, .claude/, .gemini/,
   .cursor/rules, or when asked to add .cursorrules or duplicate agent config.
+license: MIT
 ---
 
 # Maintain agent context

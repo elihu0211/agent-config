@@ -7,6 +7,7 @@ description: >-
   reviewing a report about a built system or artifact, mapping chapters to DSRM
   activities, classifying evaluations (FEDS), or checking a report before degree
   review or publication.
+license: MIT
 ---
 
 # DSRM 技術報告

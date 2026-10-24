@@ -7,6 +7,7 @@ description: >-
   Use when asked to clean up branches, delete old or merged branches, prune
   worktrees or tidy the workspace.
 compatibility: Requires git, python3, and gh (GitHub) or glab (GitLab) logged in. lsof is used when present; the wt CLI is optional.
+license: MIT
 ---
 
 # Clean merged branches

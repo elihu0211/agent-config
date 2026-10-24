@@ -7,6 +7,7 @@ description: >-
   a PR or MR, send for review, create a merge request, or when uncommitted
   changes sit on the default branch.
 compatibility: Requires git and gh (GitHub) or glab (GitLab) logged in, with network access to the forge.
+license: MIT
 ---
 
 # Open a pull request
