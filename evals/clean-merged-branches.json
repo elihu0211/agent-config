@@ -8,25 +8,53 @@
         "刪除任何東西之前，先執行唯讀的 scripts/audit.sh",
         "列出附 PR／MR 編號的 SAFE 清單，以及每個被跳過的項目與理由",
         "使用者確認後（或已要求全刪）才執行 plan.sh"
-      ]
+      ],
+      "setup": {
+        "files": {
+          "app.py": "def add(a, b):\n    return a + b\n",
+          "README.md": "# demo\n"
+        },
+        "branches": [
+          "feat/old-a",
+          "fix/old-b"
+        ]
+      }
     },
     {
       "id": "squash-merged-branch",
-      "query": "git branch -d 說我的分支沒完全合併，但它的 PR 是 squash 合併的。幫我刪掉。",
+      "query": "git branch -d feat/old-a 說分支沒完全合併，但它的 PR 早就 squash 合併進 main 了。幫我清掉這類已合併的分支。",
       "expected_behavior": [
         "說明 squash 合併會讓 git branch -d 回報未合併",
         "依賴稽核的內容驗證，而不是祖先檢查",
         "不強制刪除稽核標為 NEEDS_HUMAN 的分支"
-      ]
+      ],
+      "setup": {
+        "files": {
+          "app.py": "def add(a, b):\n    return a + b\n",
+          "README.md": "# demo\n"
+        },
+        "branches": [
+          "feat/old-a"
+        ]
+      }
     },
     {
       "id": "busy-worktree",
-      "query": "移除所有已合併分支的 worktree，包括我正在用的這個。",
+      "query": "清掉所有已合併分支對應的 worktree，包括我現在正在用的那個。",
       "expected_behavior": [
         "拒絕移除有未提交變更、有行程佔用或 shell 所在的 worktree",
         "回報佔用的理由",
         "不把檢查與移除合併成同一個指令"
-      ]
+      ],
+      "setup": {
+        "files": {
+          "app.py": "def add(a, b):\n    return a + b\n",
+          "README.md": "# demo\n"
+        },
+        "branches": [
+          "feat/old-a"
+        ]
+      }
     }
   ]
 }

@@ -1,9 +1,9 @@
 ---
 name: maintain-agent-context
 description: >-
-  維護 repo 內與廠商無關的 agent 指示檔。用於編輯 AGENTS.md、CLAUDE.md、
-  .agents/skills、skills-lock.json、.claude/、.gemini/、.cursor/rules，
-  或被要求新增 .cursorrules、複製一份 agent 設定時。
+  維護 repo 內與廠商無關的 agent 指示檔。用於編輯或新增 AGENTS.md、CLAUDE.md、
+  .agents/skills、skills-lock.json、.claude/、.gemini/、.cursor/rules，把指令寫進 CLAUDE.md 或 AGENTS.md，
+  修改已安裝的共用技能，或被要求新增 .cursorrules、複製一份 agent 設定時。
 license: MIT
 ---
 

@@ -74,7 +74,9 @@ skills-update:
 1. 把 [`template/`](template) 複製成 `skills/<name>/`，並把 `SKILL.template.md` 改名為 `SKILL.md`（或直接改既有技能）。範本不叫 `SKILL.md`，是因為 skills CLI 會把它當成可安裝技能。規範見 [`AGENTS.md`](AGENTS.md)。
 2. 把技能加進 [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)。
 3. 新增 `evals/<name>.json`，至少 3 個情境（`query` 與 `expected_behavior`）；先從「沒有此技能時 agent 會做錯的任務」寫起，再寫技能本文。放在 `skills/` 之外，消費端不會裝到。
-4. 執行 `uv run scripts/validate.py`（技能若有腳本，也跑 `bash skills/<name>/scripts/test.sh`），再開 PR。
+4. 執行 `uv run scripts/validate.py`（技能若有腳本，也跑 `bash skills/<name>/scripts/test.sh`）。
+5. 量測觸發率：`uv run scripts/run_evals.py --runs 3 [--only <name>]`。每個情境在全新的暫時 git repo 以 plan 模式執行（禁用 Bash／Edit／Write，不會產生副作用），統計 agent 是否載入預期技能，另有 4 個不該觸發的對照情境。情境可帶 `setup`（`files` 先 commit、`dirty` 為未提交變更、`branches` 為額外分支）；`"trigger": false` 表示不要求觸發。結果有隨機性，看趨勢，不看單次。
+6. 開 PR。
 
 ## 發布
 

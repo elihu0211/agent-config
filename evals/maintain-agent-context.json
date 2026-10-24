@@ -3,11 +3,17 @@
   "cases": [
     {
       "id": "claude-md-import-only",
-      "query": "把我們的建置與測試指令寫進 CLAUDE.md。",
+      "query": "把這個專案的建置與測試指令寫進 CLAUDE.md。",
       "expected_behavior": [
         "把指令放進 AGENTS.md",
         "CLAUDE.md 維持為 @AGENTS.md 的匯入，加上 Claude 專屬備註而已"
-      ]
+      ],
+      "setup": {
+        "files": {
+          "AGENTS.md": "# AGENTS.md\n",
+          "CLAUDE.md": "@AGENTS.md\n"
+        }
+      }
     },
     {
       "id": "cursorrules",
@@ -19,11 +25,17 @@
     },
     {
       "id": "edit-installed-skill",
-      "query": "修正 skills-lock.json 所列某個技能在 .agents/skills/<name> 裡的錯字。",
+      "query": "skills-lock.json 列的 .agents/skills/release-notes 裡有個錯字，直接幫我改掉。",
       "expected_behavior": [
         "不手改安裝後的副本",
         "指向 lock 項目所記的來源 repo 與更新流程"
-      ]
+      ],
+      "setup": {
+        "files": {
+          "skills-lock.json": "{\"skills\":{\"release-notes\":{\"source\":\"owner/skills\"}}}\n",
+          ".agents/skills/release-notes/SKILL.md": "---\nname: release-notes\ndescription: demo\n---\n\n# Release notse\n"
+        }
+      }
     }
   ]
 }
