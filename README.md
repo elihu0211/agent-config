@@ -72,7 +72,8 @@ Use one channel per project: a skill installed both ways loads twice.
 
 1. Copy [`template/`](template) to `skills/<name>/` and rename `SKILL.template.md` to `SKILL.md` (or edit an existing skill). The template is not named `SKILL.md` because the skills CLI would otherwise offer it as an installable skill. Conventions: [`AGENTS.md`](AGENTS.md).
 2. Add the skill to [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json).
-3. Run `uv run scripts/validate.py`, then open a PR.
+3. Add `evals/<name>.json` with at least three cases (`query` and `expected_behavior`); they are written before the skill text, from tasks the agent gets wrong without it. They live outside `skills/` so consumers do not install them.
+4. Run `uv run scripts/validate.py` (and `bash skills/<name>/scripts/test.sh` if the skill has scripts), then open a PR.
 
 ## Release
 

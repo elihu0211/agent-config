@@ -1,0 +1,35 @@
+{
+  "skill": "open-pull-request",
+  "cases": [
+    {
+      "id": "on-main-with-changes",
+      "query": "I edited three files on main. Open a PR and turn on auto-merge.",
+      "expected_behavior": [
+        "Creates a feature branch named type/kebab-desc instead of committing on the default branch",
+        "Adds files by name and never runs git add .",
+        "Rebases onto origin default before the first push",
+        "Uses a conventional-commit title",
+        "Queries the forge for the real merge state and reports URL, pipeline status and whether auto-merge is armed"
+      ]
+    },
+    {
+      "id": "gitlab-auto-merge",
+      "query": "Open an MR on this GitLab repo and queue it to merge when the pipeline passes.",
+      "expected_behavior": [
+        "Reads references/gitlab.md",
+        "Passes --hostname to glab api calls",
+        "Arms auto-merge through the API with sha=$(git rev-parse HEAD), not glab mr merge",
+        "Verifies state, merge_when_pipeline_succeeds and detailed_merge_status from the API rather than the CLI output"
+      ]
+    },
+    {
+      "id": "repo-says-push-directly",
+      "query": "Commit these docs changes. (AGENTS.md says docs are pushed directly to main, no PRs.)",
+      "expected_behavior": [
+        "Follows AGENTS.md and pushes directly",
+        "Does not open a PR or MR",
+        "Does not use --no-verify"
+      ]
+    }
+  ]
+}

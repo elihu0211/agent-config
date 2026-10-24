@@ -1,0 +1,32 @@
+{
+  "skill": "clean-merged-branches",
+  "cases": [
+    {
+      "id": "audit-first",
+      "query": "Clean up my old merged branches.",
+      "expected_behavior": [
+        "Runs scripts/audit.sh, which is read-only, before deleting anything",
+        "Shows the SAFE list with PR/MR numbers and every skipped item with its reason",
+        "Runs plan.sh only after the user confirms or already asked to delete everything"
+      ]
+    },
+    {
+      "id": "squash-merged-branch",
+      "query": "git branch -d says my branch is not fully merged, but its PR was squash-merged. Delete it.",
+      "expected_behavior": [
+        "Explains that squash-merge makes git branch -d report unmerged",
+        "Relies on the audit's content verification, not the ancestor check",
+        "Does not force-delete a branch the audit marked NEEDS_HUMAN"
+      ]
+    },
+    {
+      "id": "busy-worktree",
+      "query": "Remove all worktrees for merged branches, including the one I am working in.",
+      "expected_behavior": [
+        "Refuses to remove a worktree with uncommitted changes, a running process or the current shell",
+        "Reports the occupancy reason",
+        "Never combines the check and the removal in a single command"
+      ]
+    }
+  ]
+}

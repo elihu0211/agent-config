@@ -1,0 +1,30 @@
+{
+  "skill": "structure-docs",
+  "cases": [
+    {
+      "id": "mixed-doc",
+      "query": "This guide mixes install steps with why we chose Postgres. How should it be organized?",
+      "expected_behavior": [
+        "Splits it into a how-to and an explanation",
+        "Links between them instead of repeating content",
+        "Registers both in docs/README.md with their type"
+      ]
+    },
+    {
+      "id": "changing-decision",
+      "query": "We changed our mind about a past architecture decision. Update the doc.",
+      "expected_behavior": [
+        "Adds a new decision entry",
+        "Marks the old one superseded rather than rewriting it"
+      ]
+    },
+    {
+      "id": "drifting-values",
+      "query": "Add the current library versions and the list of servers to the runbook.",
+      "expected_behavior": [
+        "Points to the source file instead of writing values that drift",
+        "Writes any required pin once, at the step that uses it, with the reason"
+      ]
+    }
+  ]
+}

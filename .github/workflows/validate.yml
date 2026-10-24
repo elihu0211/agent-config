@@ -16,6 +16,8 @@ jobs:
       - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
       - name: Validate skills and marketplace
         run: uv run scripts/validate.py
+      - name: Skill script tests
+        run: for t in skills/*/scripts/test.sh; do [ -f "$t" ] && bash "$t"; done
       - name: No SKILL.md outside skills/
         run: |
           # The skills CLI scans the whole repo for SKILL.md; one outside skills/ (such as

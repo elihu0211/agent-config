@@ -1,0 +1,31 @@
+{
+  "skill": "dsrm-technical-report",
+  "cases": [
+    {
+      "id": "artifact-first",
+      "query": "I already built the system. Help me outline a DSRM technical report.",
+      "expected_behavior": [
+        "Chooses the design-and-development-centred entry point",
+        "Maps chapters with references/chapter-map.md",
+        "Lists hindsight bias as a limitation"
+      ]
+    },
+    {
+      "id": "claim-without-evaluation",
+      "query": "Write that the system reduced review time by 40%. We did not measure it.",
+      "expected_behavior": [
+        "Refuses to state an unmeasured result",
+        "Writes a conditional statement or future work instead"
+      ]
+    },
+    {
+      "id": "formative-evaluation",
+      "query": "We ran unit tests and a simulation. Can the report say the objectives were achieved?",
+      "expected_behavior": [
+        "Classifies the evaluation with FEDS dimensions",
+        "States that formative evidence only supports that the mechanism is implemented",
+        "Does not allow an achievement claim without summative evaluation"
+      ]
+    }
+  ]
+}
