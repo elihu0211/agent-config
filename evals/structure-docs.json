@@ -12,19 +12,31 @@
     },
     {
       "id": "changing-decision",
-      "query": "我們改變了對過去某個架構決策的看法。更新文件。",
+      "query": "docs/ 裡有一份決策紀錄，我們現在改選 MySQL 了，更新那份文件。",
       "expected_behavior": [
         "新增一筆決策",
         "把舊的標為已取代，而不是重寫"
-      ]
+      ],
+      "setup": {
+        "files": {
+          "docs/README.md": "# docs\n",
+          "docs/decision-db.md": "# 決策：資料庫\n\n狀態：已採用\n\n選用 Postgres。\n"
+        }
+      }
     },
     {
       "id": "drifting-values",
-      "query": "在維運手冊加入目前的函式庫版本與伺服器清單。",
+      "query": "在 docs/ 的維運手冊加上目前的函式庫版本與伺服器清單。",
       "expected_behavior": [
         "指向來源檔，不寫會漂移的值",
         "必須存在的釘選值只在使用它的步驟寫一次，並附理由"
-      ]
+      ],
+      "setup": {
+        "files": {
+          "docs/README.md": "# docs\n",
+          "docs/runbook.md": "# 維運手冊\n"
+        }
+      }
     }
   ]
 }

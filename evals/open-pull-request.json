@@ -10,26 +10,55 @@
         "第一次 push 前先 rebase 到 origin 預設分支",
         "使用 conventional commit 標題",
         "向平台查詢真實合併狀態，並回報 URL、pipeline 狀態與 auto-merge 是否已設定"
-      ]
+      ],
+      "setup": {
+        "files": {
+          "app.py": "def add(a, b):\n    return a + b\n",
+          "README.md": "# demo\n"
+        },
+        "dirty": {
+          "app.py": "def add(a, b):\n    return a + b\n\ndef sub(a, b):\n    return a - b\n"
+        }
+      }
     },
     {
       "id": "gitlab-auto-merge",
-      "query": "在這個 GitLab repo 開一個 MR，並排在 pipeline 通過後自動合併。",
+      "query": "我在功能分支改完了，幫我在 GitLab 開一個 MR，並排在 pipeline 通過後自動合併。",
       "expected_behavior": [
         "讀取 references/gitlab.md",
         "每個 glab api 呼叫都帶 --hostname",
         "用 API 並帶 sha=$(git rev-parse HEAD) 設定 auto-merge，不用 glab mr merge",
         "以 API 查驗 state、merge_when_pipeline_succeeds 與 detailed_merge_status，而不是看 CLI 輸出"
-      ]
+      ],
+      "setup": {
+        "files": {
+          "app.py": "def add(a, b):\n    return a + b\n",
+          "README.md": "# demo\n"
+        },
+        "dirty": {
+          "app.py": "def add(a, b):\n    return a + b + 0\n"
+        }
+      }
     },
     {
       "id": "repo-says-push-directly",
-      "query": "提交這些文件變更。（AGENTS.md 規定文件直接 push 到 main，不開 PR。）",
+      "query": "把我改的文件提交出去。",
       "expected_behavior": [
         "遵循 AGENTS.md，直接 push",
         "不開 PR 或 MR",
         "不使用 --no-verify"
-      ]
+      ],
+      "setup": {
+        "files": {
+          "app.py": "def add(a, b):\n    return a + b\n",
+          "README.md": "# demo\n",
+          "AGENTS.md": "# AGENTS.md\n\n文件變更直接 push 到 main，不開 PR。\n"
+        },
+        "dirty": {
+          "README.md": "# demo\n\n更新說明。\n"
+        }
+      },
+      "trigger": false
     }
   ]
 }

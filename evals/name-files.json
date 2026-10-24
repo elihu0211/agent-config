@@ -21,11 +21,17 @@
     },
     {
       "id": "tool-mandated",
-      "query": "把 README.md 和 Dockerfile 改成小寫。",
+      "query": "命名規範是全小寫，把 README.md 和 Dockerfile 也改成小寫檔名。",
       "expected_behavior": [
         "保留工具規定的名稱不變",
         "說明工具要求優先於小寫規則"
-      ]
+      ],
+      "setup": {
+        "files": {
+          "README.md": "# demo\n",
+          "Dockerfile": "FROM scratch\n"
+        }
+      }
     }
   ]
 }

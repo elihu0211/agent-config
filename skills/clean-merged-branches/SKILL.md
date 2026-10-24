@@ -1,9 +1,9 @@
 ---
 name: clean-merged-branches
 description: >-
-  稽核並刪除 GitHub 或 GitLab 上 PR／MR 已合併的遠端分支、失效的本機追蹤分支與各分支的 git worktree，
-  並逐檔驗證分支內容確實進了預設分支。用於被要求清理分支、刪除舊的或已合併的分支、
-  清 worktree 或整理工作區時。
+  用於被要求清理分支、刪除舊的或已合併的分支、移除 worktree、整理工作區，
+  或 git branch -d 對 squash 合併的分支回報「未完全合併」時：稽核並刪除 GitHub 或 GitLab 上
+  PR／MR 已合併的遠端分支、失效的本機追蹤分支與各分支的 git worktree，並逐檔驗證內容確實進了預設分支。
 compatibility: 需要 git、python3，以及已登入的 gh（GitHub）或 glab（GitLab）。有 lsof 時會使用；wt CLI 為選用。
 license: MIT
 ---
