@@ -1,0 +1,31 @@
+{
+  "skill": "name-files",
+  "cases": [
+    {
+      "id": "rename-cjk",
+      "query": "Rename 第二章 研究方法 v3.docx so it follows our conventions.",
+      "expected_behavior": [
+        "Produces lowercase ASCII kebab-case with an order prefix such as 02-research-method",
+        "Moves the human title into document metadata",
+        "Does not put version words like v3 or final in the name"
+      ]
+    },
+    {
+      "id": "migration",
+      "query": "Migrate this repo off space and non-ASCII paths.",
+      "expected_behavior": [
+        "Builds an old-to-new mapping and checks for collisions first",
+        "Uses git mv in one commit",
+        "Rewrites relative links and config paths and runs the link check and build"
+      ]
+    },
+    {
+      "id": "tool-mandated",
+      "query": "Rename README.md and Dockerfile to lowercase.",
+      "expected_behavior": [
+        "Keeps tool-mandated names unchanged",
+        "Explains that tool requirements override the lowercase rule"
+      ]
+    }
+  ]
+}

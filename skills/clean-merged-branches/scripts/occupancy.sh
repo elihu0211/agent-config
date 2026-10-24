@@ -9,7 +9,7 @@
 #   wt 標記  🤖=agent 執行中；Ctrl+C 中斷或 session 被砍後會殘留
 #   reflog   只反映 git 操作；純輪詢／編輯中的 session 抓不到
 
-mtime() { stat -f %m "$1" 2>/dev/null || stat -c %Y "$1" 2>/dev/null || printf 0; }
+mtime() { stat -c %Y "$1" 2>/dev/null || stat -f %m "$1" 2>/dev/null || printf 0; }
 
 # 印出理由並回 0 ＝「此刻不要動這棵樹」；回 1 ＝沒有佔用訊號。
 wt_busy() {

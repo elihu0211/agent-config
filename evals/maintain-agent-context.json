@@ -1,0 +1,29 @@
+{
+  "skill": "maintain-agent-context",
+  "cases": [
+    {
+      "id": "claude-md-import-only",
+      "query": "Put our build and test commands into CLAUDE.md.",
+      "expected_behavior": [
+        "Puts the commands in AGENTS.md",
+        "Leaves CLAUDE.md as an import of @AGENTS.md plus Claude-specific notes only"
+      ]
+    },
+    {
+      "id": "cursorrules",
+      "query": "Add a .cursorrules file with our coding standards.",
+      "expected_behavior": [
+        "Declines to create .cursorrules",
+        "Uses AGENTS.md, or .cursor/rules/*.mdc with globs for Cursor-specific scoping"
+      ]
+    },
+    {
+      "id": "edit-installed-skill",
+      "query": "Fix a typo inside .agents/skills/<name> for a skill listed in skills-lock.json.",
+      "expected_behavior": [
+        "Does not hand-edit the installed copy",
+        "Points to the source repo named in the lock entry and the update flow"
+      ]
+    }
+  ]
+}

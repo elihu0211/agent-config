@@ -28,6 +28,12 @@ NAME_MAX = 64
 DESCRIPTION_MAX = 1024
 COMPATIBILITY_MAX = 500
 BODY_LINES_MAX = 500
+RESERVED = ("anthropic", "claude")
+XML = re.compile(r"<[^>]+>")
+PERSON = re.compile(r"\b(I can|I will|you can|You can)\b")
+EVALS = ROOT / "evals"
+EVALS_MIN = 3
+REFERENCE_TOC_LINES = 100
 KNOWN_FIELDS = {"name", "description", "license", "compatibility", "metadata", "allowed-tools"}
 LINK = re.compile(r"\]\((?!https?://|mailto:|#)([^)\s]+)\)")
 
@@ -66,6 +72,9 @@ def check_skill(skill: Path) -> None:
     elif name != skill.name:
         errors.append(f"{rel}: name {name!r} must match the directory name")
 
+    if isinstance(name, str) and any(w in name for w in RESERVED):
+        errors.append(f"{rel}: name must not contain a reserved word ({', '.join(RESERVED)})")
+
     desc = meta.get("description")
     if not isinstance(desc, str) or not desc.strip():
         errors.append(f"{rel}: description is required")
@@ -73,6 +82,11 @@ def check_skill(skill: Path) -> None:
         errors.append(f"{rel}: description is {len(desc)} characters (max {DESCRIPTION_MAX})")
     elif "use when" not in desc.lower():
         warnings.append(f"{rel}: description should say when to use the skill ('Use when ...')")
+
+    if isinstance(desc, str) and (XML.search(desc) or (isinstance(name, str) and XML.search(name))):
+        errors.append(f"{rel}: name and description must not contain XML tags")
+    if isinstance(desc, str) and PERSON.search(desc):
+        warnings.append(f"{rel}: description should not use first or second person")
 
     compat = meta.get("compatibility")
     if compat is not None and (not isinstance(compat, str) or not 1 <= len(compat) <= COMPATIBILITY_MAX):
@@ -100,6 +114,25 @@ def check_skill(skill: Path) -> None:
             path = target.split("#", 1)[0]
             if path and not (md.parent / path).exists():
                 errors.append(f"{md.relative_to(ROOT)}: broken link {target}")
+
+
+    skill_text = manifest.read_text(encoding="utf-8")
+    for ref in sorted((skill / "references").glob("*.md")) if (skill / "references").is_dir() else []:
+        if f"references/{ref.name}" not in skill_text:
+            errors.append(f"{ref.relative_to(ROOT)}: not linked from SKILL.md")
+        text = ref.read_text(encoding="utf-8")
+        if text.count("\n") > REFERENCE_TOC_LINES and not re.search(r"^#+\s*(contents|目錄)", text, re.I | re.M):
+            warnings.append(f"{ref.relative_to(ROOT)}: over {REFERENCE_TOC_LINES} lines without a Contents section")
+
+    cases_file = EVALS / f"{skill.name}.json"
+    try:
+        cases = json.loads(cases_file.read_text(encoding="utf-8")).get("cases", [])
+    except (OSError, ValueError):
+        errors.append(f"evals/{skill.name}.json: missing or invalid")
+        return
+    good = [c for c in cases if c.get("query") and c.get("expected_behavior")]
+    if len(good) < EVALS_MIN:
+        errors.append(f"evals/{skill.name}.json: needs at least {EVALS_MIN} cases with query and expected_behavior")
 
 
 def check_marketplace(names: set[str]) -> None:
